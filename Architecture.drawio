@@ -1,0 +1,29 @@
+<mxfile host="Electron" modified="2023-06-29T07:48:13.859Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.2.8 Chrome/112.0.5615.165 Electron/24.2.0 Safari/537.36" etag="o_zU5loTeM-4xYPrCebX" version="21.2.8" type="device">
+  <diagram name="Page-1" id="5CQp9L27gXIg4AvH3jP8">
+    <mxGraphModel dx="1743" dy="547" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="pZ2EmuQ-Uhn6XIr66Xkl-1" value="База данных" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Comic Sans MS;" vertex="1" parent="1">
+          <mxGeometry x="-360" y="270" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="pZ2EmuQ-Uhn6XIr66Xkl-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="pZ2EmuQ-Uhn6XIr66Xkl-2">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="277.51428571428573" y="370" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pZ2EmuQ-Uhn6XIr66Xkl-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="pZ2EmuQ-Uhn6XIr66Xkl-2">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="422.48571428571404" y="370" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pZ2EmuQ-Uhn6XIr66Xkl-2" value="Пользователь" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Comic Sans MS;" vertex="1" parent="1">
+          <mxGeometry x="290" y="270" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="pZ2EmuQ-Uhn6XIr66Xkl-3" value="Админ" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Comic Sans MS;" vertex="1" parent="1">
+          <mxGeometry x="712.5" y="270" width="120" height="60" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
