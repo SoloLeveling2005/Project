@@ -45,18 +45,16 @@ def simulate_click(hwnd, x, y):
     simulate_click(hwnd, x, y)
     """
 
+    print('click')
+
     # Константы и структуры из Windows API
     WM_LBUTTONDOWN = 0x0201
     WM_LBUTTONUP = 0x0202
-
-    # Получение координат клика в формате LPARAM
-    lparam = y << 16 | x
-
-    # Имитация нажатия левой кнопки мыши
-    ctypes.windll.user32.PostMessageW(hwnd, WM_LBUTTONDOWN, 1, lparam)
-
-    # Имитация отпускания левой кнопки мыши
-    ctypes.windll.user32.PostMessageW(hwnd, WM_LBUTTONUP, 0, lparam)
+    l_param = win32api.MAKELONG(x, y)
+    # x = 212
+    # y = 66
+    win32gui.PostMessage(hwnd, win32con.BM_CLICK, 0, l_param)
+    # win32gui.PostMessage(hwnd, win32con.BM_CLICK, 0, l_param)
 
 
 # Функция для имитации нажатия клавиши клавиатуры
@@ -74,109 +72,110 @@ def simulate_text_input(key_code):
     """
     win32api.SendMessage(hwnd, win32con.WM_CHAR, key_code, 0)
 
-    # left, top, right, bot = win32gui.GetWindowRect(hwnd)
-    # w = right - left
-    # h = bot - top
-    #
-    # hwndDC = win32gui.GetWindowDC(hwnd)
-    # mfcDC = win32ui.CreateDCFromHandle(hwndDC)
-    # saveDC = mfcDC.CreateCompatibleDC()
-    #
-    # saveBitMap = win32ui.CreateBitmap()
-    # saveBitMap.CreateCompatibleBitmap(mfcDC, w, h)
-    #
-    # saveDC.SelectObject(saveBitMap)
-    #
-    # result = ctypes.windll.user32.PrintWindow(hwnd, saveDC.GetSafeHdc(), 0)
-    # print(result)
-    #
-    # bmpinfo = saveBitMap.GetInfo()
-    # bmpstr = saveBitMap.GetBitmapBits(True)
-    #
-    # im = Image.frombuffer(
-    #     'RGB',
-    #     (bmpinfo['bmWidth'], bmpinfo['bmHeight']),
-    #     bmpstr, 'raw', 'BGRX', 0, 1)
-    #
-    # win32gui.DeleteObject(saveBitMap.GetHandle())
-    # saveDC.DeleteDC()
-    # mfcDC.DeleteDC()
-    # win32gui.ReleaseDC(hwnd, hwndDC)
-    #
-    # if result == 1:
-    #     #PrintWindow Succeeded
-    #     im.save("test.png")
 
-    # # Получение размеров окна
-    # window_rect = win32gui.GetWindowRect(hwnd)
-    # window_width = window_rect[2] - window_rect[0]
-    # window_height = window_rect[3] - window_rect[1]
-    #
-    # # Получение контекста устройства окна
-    # window_dc = win32gui.GetWindowDC(hwnd)
-    # window_dc_obj = win32ui.CreateDCFromHandle(window_dc)
-    #
-    # # Создание контекста памяти для сохранения изображения
-    # mem_dc = window_dc_obj.CreateCompatibleDC()
-    # bitmap = win32ui.CreateBitmap()
-    # bitmap.CreateCompatibleBitmap(window_dc_obj, window_width, window_height)
-    # mem_dc.SelectObject(bitmap)
-    #
-    # # Копирование содержимого окна в контекст памяти
-    # mem_dc.BitBlt((0, 0), (window_width, window_height), window_dc_obj, (0, 0), win32con.SRCCOPY)
-    #
-    # # Извлечение данных из контекста памяти в массив numpy
-    # bmp_info = bitmap.GetInfo()
-    # image = np.frombuffer(bitmap.GetBitmapBits(True), dtype=np.uint8)
-    # image = image.reshape((window_height, window_width, 4))
-    #
-    # # Освобождение ресурсов
-    # win32gui.DeleteObject(bitmap.GetHandle())
-    # mem_dc.DeleteDC()
-    # window_dc_obj.DeleteDC()
-    # win32gui.ReleaseDC(hwnd, window_dc)
-    #
-    # # Преобразование изображения из формата BGRA в BGR
-    # image = cv2.cvtColor(image, cv2.COLOR_BGRA2BGR)
-    #
-    # # Обработка изображения с помощью OpenCV
-    # # Ваш код для обработки изображения
-    #
-    # # Отображение обработанного изображения
-    # cv2.imshow("Processed Image", image)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
+# left, top, right, bot = win32gui.GetWindowRect(hwnd)
+# w = right - left
+# h = bot - top
+#
+# hwndDC = win32gui.GetWindowDC(hwnd)
+# mfcDC = win32ui.CreateDCFromHandle(hwndDC)
+# saveDC = mfcDC.CreateCompatibleDC()
+#
+# saveBitMap = win32ui.CreateBitmap()
+# saveBitMap.CreateCompatibleBitmap(mfcDC, w, h)
+#
+# saveDC.SelectObject(saveBitMap)
+#
+# result = ctypes.windll.user32.PrintWindow(hwnd, saveDC.GetSafeHdc(), 0)
+# print(result)
+#
+# bmpinfo = saveBitMap.GetInfo()
+# bmpstr = saveBitMap.GetBitmapBits(True)
+#
+# im = Image.frombuffer(
+#     'RGB',
+#     (bmpinfo['bmWidth'], bmpinfo['bmHeight']),
+#     bmpstr, 'raw', 'BGRX', 0, 1)
+#
+# win32gui.DeleteObject(saveBitMap.GetHandle())
+# saveDC.DeleteDC()
+# mfcDC.DeleteDC()
+# win32gui.ReleaseDC(hwnd, hwndDC)
+#
+# if result == 1:
+#     #PrintWindow Succeeded
+#     im.save("test.png")
 
-def invisible(window_name):
-    """Функция работает только в ОС Windows. Возвращает скриншот окна в виде массива PIL Image."""
-    hwnd = win32gui.FindWindow(None, window_name)
-    f = ctypes.windll.dwmapi.DwmGetWindowAttribute
-    rect = ctypes.wintypes.RECT()
-    dwma_extended_frame_bounds = 9
-    f(ctypes.wintypes.HWND(hwnd),
-      ctypes.wintypes.DWORD(dwma_extended_frame_bounds),
-      ctypes.byref(rect),
-      ctypes.sizeof(rect)
-      )
-    width = rect.right - rect.left  # noqa
-    height = rect.bottom - rect.top  # noqa
-    hwnddc = win32gui.GetWindowDC(hwnd)
-    mfcdc = win32ui.CreateDCFromHandle(hwnddc)
-    savedc = mfcdc.CreateCompatibleDC()
-    savebitmap = win32ui.CreateBitmap()
-    savebitmap.CreateCompatibleBitmap(mfcdc, width, height)
-    savedc.SelectObject(savebitmap)
-    ctypes.windll.user32.PrintWindow(hwnd, savedc.GetSafeHdc(), 1)
-    bmpinfo = savebitmap.GetInfo()
-    bmpstr = savebitmap.GetBitmapBits(True)
-    im_scr = Image.frombuffer('RGB', (bmpinfo['bmWidth'], bmpinfo['bmHeight']), bmpstr, 'raw', 'BGRX', 0, 1)
-    win32gui.DeleteObject(savebitmap.GetHandle())
-    savedc.DeleteDC()
-    mfcdc.DeleteDC()
-    win32gui.ReleaseDC(hwnd, hwnddc)
-    return im_scr
+# # Получение размеров окна
+# window_rect = win32gui.GetWindowRect(hwnd)
+# window_width = window_rect[2] - window_rect[0]
+# window_height = window_rect[3] - window_rect[1]
+#
+# # Получение контекста устройства окна
+# window_dc = win32gui.GetWindowDC(hwnd)
+# window_dc_obj = win32ui.CreateDCFromHandle(window_dc)
+#
+# # Создание контекста памяти для сохранения изображения
+# mem_dc = window_dc_obj.CreateCompatibleDC()
+# bitmap = win32ui.CreateBitmap()
+# bitmap.CreateCompatibleBitmap(window_dc_obj, window_width, window_height)
+# mem_dc.SelectObject(bitmap)
+#
+# # Копирование содержимого окна в контекст памяти
+# mem_dc.BitBlt((0, 0), (window_width, window_height), window_dc_obj, (0, 0), win32con.SRCCOPY)
+#
+# # Извлечение данных из контекста памяти в массив numpy
+# bmp_info = bitmap.GetInfo()
+# image = np.frombuffer(bitmap.GetBitmapBits(True), dtype=np.uint8)
+# image = image.reshape((window_height, window_width, 4))
+#
+# # Освобождение ресурсов
+# win32gui.DeleteObject(bitmap.GetHandle())
+# mem_dc.DeleteDC()
+# window_dc_obj.DeleteDC()
+# win32gui.ReleaseDC(hwnd, window_dc)
+#
+# # Преобразование изображения из формата BGRA в BGR
+# image = cv2.cvtColor(image, cv2.COLOR_BGRA2BGR)
+#
+# # Обработка изображения с помощью OpenCV
+# # Ваш код для обработки изображения
+#
+# # Отображение обработанного изображения
+# cv2.imshow("Processed Image", image)
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()
 
-invisible("Albion Online Client").show()
+# def invisible(window_name):
+#     """Функция работает только в ОС Windows. Возвращает скриншот окна в виде массива PIL Image."""
+#     hwnd = win32gui.FindWindow(None, window_name)
+#     f = ctypes.windll.dwmapi.DwmGetWindowAttribute
+#     rect = ctypes.wintypes.RECT()
+#     dwma_extended_frame_bounds = 9
+#     f(ctypes.wintypes.HWND(hwnd),
+#       ctypes.wintypes.DWORD(dwma_extended_frame_bounds),
+#       ctypes.byref(rect),
+#       ctypes.sizeof(rect)
+#       )
+#     width = rect.right - rect.left  # noqa
+#     height = rect.bottom - rect.top  # noqa
+#     hwnddc = win32gui.GetWindowDC(hwnd)
+#     mfcdc = win32ui.CreateDCFromHandle(hwnddc)
+#     savedc = mfcdc.CreateCompatibleDC()
+#     savebitmap = win32ui.CreateBitmap()
+#     savebitmap.CreateCompatibleBitmap(mfcdc, width, height)
+#     savedc.SelectObject(savebitmap)
+#     ctypes.windll.user32.PrintWindow(hwnd, savedc.GetSafeHdc(), 1)
+#     bmpinfo = savebitmap.GetInfo()
+#     bmpstr = savebitmap.GetBitmapBits(True)
+#     im_scr = Image.frombuffer('RGB', (bmpinfo['bmWidth'], bmpinfo['bmHeight']), bmpstr, 'raw', 'BGRX', 0, 1)
+#     win32gui.DeleteObject(savebitmap.GetHandle())
+#     savedc.DeleteDC()
+#     mfcdc.DeleteDC()
+#     win32gui.ReleaseDC(hwnd, hwnddc)
+#     return im_scr
+#
+# invisible("Albion Online Client").show()
 
 # # Получение размеров окна
 # window_rect = win32gui.GetWindowRect(hwnd)
@@ -278,3 +277,51 @@ invisible("Albion Online Client").show()
 # query_image_paths = ["Screenshot_2.png", "query_image2.jpg", "query_image3.jpg"]  # Пути к изображениям объектов для поиска
 # target_image_path = "target_image.jpg"  # Путь к изображению, на котором выполняется поиск
 # find_objects(query_image_paths, target_image_path)
+
+import pyautogui
+import time
+
+time.sleep(2)
+path = "images/stone/Screenshot_"
+# time.sleep(3)
+while True:
+    time.sleep(1)
+    buttons = []
+    for i in range(2, 6):
+        # Получение снимка экрана
+        # Загрузка скриншота экрана
+        screenshot = pyautogui.screenshot()
+        screenshot = np.array(screenshot)  # Преобразование в массив NumPy
+        screenshot = cv2.cvtColor(screenshot,
+                                  cv2.COLOR_RGB2BGR)  # Преобразование цветового пространства в BGR (для cv2)
+
+        # Загрузка изображения, которое нужно найти
+        image_path = path + str(i) + ".png"
+        image = cv2.imread(image_path)
+
+        # Применение шаблонного сопоставления
+        result = cv2.matchTemplate(screenshot, image, cv2.TM_CCOEFF_NORMED)
+
+        # Нахождение положения максимального значения
+        min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
+
+        # Определение порогового значения
+        threshold = 0.65 * max_val  # Примерный порог: 80% от максимального значения сопоставления
+
+        if max_val > threshold:  # Проверка порогового значения
+            # Извлечение координат максимального значения
+            x, y = max_loc
+
+            # Центр найденного изображения
+            center_x = x + image.shape[1] // 2
+            center_y = y + image.shape[0] // 2
+
+            # Производим сбор
+            print("Есть контакт")
+            print(hwnd, x, y)
+            simulate_click(hwnd=hwnd, x=x, y=y)
+            time.sleep(3)
+            break
+
+        else:
+            print('Изображение не найдено на экране')

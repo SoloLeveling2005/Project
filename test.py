@@ -1,5 +1,7 @@
 import time
 
+import numpy as np
+import pyautogui
 import win32con
 import win32gui
 import win32ui
@@ -18,11 +20,11 @@ def get_window_titles():
 
 
 # Получаем все названия окон
-window_titles = get_window_titles()
-
-# Выводим названия окон
-for title in window_titles:
-    print(title)
+# window_titles = get_window_titles()
+#
+# # Выводим названия окон
+# for title in window_titles:
+#     print(title)
 
 # time.sleep(6)
 # def example_write_text():
@@ -141,5 +143,29 @@ for title in window_titles:
 # cv2.waitKey(0)
 # cv2.destroyAllWindows()
 
+# Скрыть курсор мыши
 
-fourcc = cv2.
+
+
+
+from pykeyboard import PyKeyboard
+from pymouse import PyMouse
+
+x = 100
+y = 100
+
+# Создание экземпляров виртуальной клавиатуры и мыши
+keyboard = PyKeyboard()
+mouse = PyMouse()
+
+# Управление виртуальной мышью
+# mouse.move(x, y)  # Перемещение курсора на указанные координаты
+mouse.click(x, y, 1)  # Имитация клика левой кнопкой мыши на указанных координатах
+# mouse.press(x, y, 2)  # Имитация нажатия правой кнопки мыши на указанных координатах
+# mouse.release(x, y, 2)  # Имитация отпускания правой кнопки мыши на указанных координатах
+
+# Управление виртуальной клавиатурой
+# keyboard.press_key('a')  # Имитация нажатия клавиши "a"
+# keyboard.release_key('a')  # Имитация отпускания клавиши "a"
+# keyboard.tap_key('a')  # Имитация однократного нажатия клавиши "a"
+

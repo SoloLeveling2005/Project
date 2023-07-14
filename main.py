@@ -15,8 +15,8 @@
 # # Выводим названия окон
 # for title in window_titles:
 #     print(title)
-
-
+import cv2
+import numpy as np
 # import win32gui
 # import win32api
 # import win32con
@@ -78,17 +78,45 @@
 
 import pyautogui
 import time 
-
-path = "stone"
+time.sleep(2)
+path = "images/stone/Screenshot_"
 # time.sleep(3)
 while True:
     time.sleep(1)
     buttons = []
-    for i in range(1,6):
-        button = pyautogui.locateOnScreen(path+str(i)+".png", confidence=0.65)
-        buttons.append(button)
-    if buttons:
-        for button in buttons:
-            pyautogui.click(button)
-            # time.sleep(2)
+    for i in range(2,6):
+        # Получение снимка экрана
+        # Загрузка скриншота экрана
+        screenshot = pyautogui.screenshot()
+        screenshot = np.array(screenshot)  # Преобразование в массив NumPy
+        screenshot = cv2.cvtColor(screenshot,
+                                  cv2.COLOR_RGB2BGR)  # Преобразование цветового пространства в BGR (для cv2)
 
+        # Загрузка изображения, которое нужно найти
+        image_path = path+str(i)+".png"
+        image = cv2.imread(image_path)
+
+        # Применение шаблонного сопоставления
+        result = cv2.matchTemplate(screenshot, image, cv2.TM_CCOEFF_NORMED)
+
+        # Нахождение положения максимального значения
+        min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
+
+        # Определение порогового значения
+        threshold = 0.8 * max_val  # Примерный порог: 80% от максимального значения сопоставления
+
+        if max_val > threshold:  # Проверка порогового значения
+            # Извлечение координат максимального значения
+            x, y = max_loc
+
+            # Центр найденного изображения
+            center_x = x + image.shape[1] // 2
+            center_y = y + image.shape[0] // 2
+
+            # Производим сбор
+
+            time.sleep(6)
+            break
+
+        else:
+            print('Изображение не найдено на экране')
