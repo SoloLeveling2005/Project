@@ -1,101 +1,83 @@
-# import win32gui
-#
-# def get_window_titles():
-#     def callback(hwnd, titles):
-#         if win32gui.IsWindowVisible(hwnd):
-#             titles.append(win32gui.GetWindowText(hwnd))
-#
-#     titles = []
-#     win32gui.EnumWindows(callback, titles)
-#     return titles
-#
-# # Получаем все названия окон
-# window_titles = get_window_titles()
-#
-# # Выводим названия окон
-# for title in window_titles:
-#     print(title)
+import time
+
 import cv2
 import numpy as np
-# import win32gui
-# import win32api
-# import win32con
-
-# def handle_window(hwnd, extra):
-#     if win32gui.GetWindowText(hwnd) == "Albion Online Client":  # Замените "Название окна" на фактическое название окна
-#         win32gui.SetForegroundWindow(hwnd)
-
-#         while True:
-
-#             def handle_message(hwnd, msg, wparam, lparam):
-#                 if msg == win32con.WM_LBUTTONDOWN:
-#                     x = win32api.LOWORD(lparam)
-#                     y = win32api.HIWORD(lparam)
-#                     print(f"Координаты клика: X={x}, Y={y}")
-
-#             win32gui.SetWindowLong(hwnd, win32con.GWL_WNDPROC, handle_message)
-#             win32gui.PumpMessages()
-
-
-# # Запускаем цикл перечисления окон и обработки событий
-# while True:
-#     win32gui.EnumWindows(handle_window, None)
-
-
-
-
-
-# from pynput import mouse
-# import win32gui
-
-# def on_click(x, y, button, pressed):
-#     if pressed:
-#         active_window = win32gui.GetForegroundWindow()
-#         window_title = win32gui.GetWindowText(active_window)
-
-#         if window_title == "Albion Online Client":  # Замените "Albion Online Client" на фактическое название окна
-#             print(f"Координаты клика: X={x}, Y={y}")
-
-# # Создаем экземпляр слушателя кликов мыши
-# listener = mouse.Listener(on_click=on_click)
-
-# # Запускаем слушателя в отдельном потоке
-# listener.start()
-
-# # Запускаем основной цикл
-# while True:
-#     pass
-
-
-
-
-
-
-
-
-
-
-
+import mss
+import mss.tools
 import pyautogui
-import time 
-time.sleep(2)
+
+# # Создание объекта MSS для захвата экрана
+# with mss.mss() as sct:
+#     # Определение области для захвата экрана (здесь захватывается весь экран)
+#     monitor = sct.monitors[1]  # Если у тебя один монитор, используй sct.monitors[0]
+#     capture_area = (monitor['left'], monitor['top'], monitor['width'], monitor['height'])
+#
+#     while True:
+#         # Захват текущего кадра из видеопамяти
+#         frame = np.array(sct.grab(capture_area))
+#
+#         # Преобразование цветовой схемы из BGR в RGB
+#         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+#         for i in range(2, 6):
+#
+#             # Загрузка изображения объекта, который мы хотим обнаружить
+#             object_image = cv2.imread(
+#                 'images/stone/Screenshot_'+str(i)+'.png')  # Замени 'object.png' на путь к изображению объекта
+#
+#             # Поиск объекта на текущем кадре
+#             result = cv2.matchTemplate(frame_rgb, object_image, cv2.TM_CCOEFF_NORMED)
+#             _, max_val, _, max_loc = cv2.minMaxLoc(result)
+#
+#             # Установка порога для обнаружения объекта
+#             threshold = 0.45
+#
+#             # Если найденное совпадение превышает порог, считаем, что объект обнаружен
+#             print(i, max_val)
+#             if max_val >= threshold:
+#                 # Получение координат верхнего левого угла и размеров объекта
+#                 top_left = max_loc
+#                 height, width, _ = object_image.shape
+#
+#                 # Вывод сообщения в консоль
+#                 print(f"Объект обнаружен: координаты ({top_left[0]}, {top_left[1]}), ширина {width}, высота {height}")
+#
+#             # Отображение текущего кадра на экране
+#             # cv2.imshow('Screen', frame_rgb)
+#
+#             # Прерывание цикла, если нажата клавиша 'q'
+#             if cv2.waitKey(1) == ord('q'):
+#                 break
+#
+# # Закрытие всех окон после выхода из цикла
+# cv2.destroyAllWindows()
+#
+import cv2
+import numpy as np
+import pyautogui
+import time
+import threading
+
 path = "images/stone/Screenshot_"
-# time.sleep(3)
+
+# Загрузка изображений
+images = []
+for i in range(2, 13):
+    image_path = path + str(i) + ".png"
+    image = cv2.imread(image_path)
+    images.append(image)
+
 while True:
-    time.sleep(1)
-    buttons = []
-    for i in range(2,6):
-        # Получение снимка экрана
-        # Загрузка скриншота экрана
-        screenshot = pyautogui.screenshot()
-        screenshot = np.array(screenshot)  # Преобразование в массив NumPy
-        screenshot = cv2.cvtColor(screenshot,
-                                  cv2.COLOR_RGB2BGR)  # Преобразование цветового пространства в BGR (для cv2)
+    found = False
+    # Предварительное выполнение цветового преобразования для скриншота
+    screenshot = pyautogui.screenshot()
+    screenshot = np.array(screenshot)
+    screenshot = cv2.cvtColor(screenshot, cv2.COLOR_RGB2BGR)
 
-        # Загрузка изображения, которое нужно найти
-        image_path = path+str(i)+".png"
-        image = cv2.imread(image_path)
+    # Общий массив для хранения успешных результатов
+    finds_object = []
 
+
+    def find_stone(image):
         # Применение шаблонного сопоставления
         result = cv2.matchTemplate(screenshot, image, cv2.TM_CCOEFF_NORMED)
 
@@ -103,9 +85,10 @@ while True:
         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
 
         # Определение порогового значения
-        threshold = 0.8 * max_val  # Примерный порог: 80% от максимального значения сопоставления
+        threshold = 0.65
 
-        if max_val > threshold:  # Проверка порогового значения
+        if max_val >= threshold:
+
             # Извлечение координат максимального значения
             x, y = max_loc
 
@@ -113,10 +96,25 @@ while True:
             center_x = x + image.shape[1] // 2
             center_y = y + image.shape[0] // 2
 
-            # Производим сбор
+            if [center_x, center_y] not in finds_object:
+                finds_object.append([center_x, center_y])
 
-            time.sleep(6)
-            break
 
-        else:
-            print('Изображение не найдено на экране')
+    # Создание и запуск потоков
+    threads = []
+    for i, image in enumerate(images):  # Пример: запуск 5 потоков
+        thread = threading.Thread(target=find_stone, args=(image,))
+        thread.start()
+        threads.append(thread)
+
+    # Ожидание завершения всех потоков
+    for thread in threads:
+        thread.join()
+
+
+    if len(finds_object) > 1:
+        pyautogui.click(finds_object[0][0], finds_object[0][1])
+
+
+    # Задержка между итерациями (если необходимо)
+    time.sleep(1)
